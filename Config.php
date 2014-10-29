@@ -301,6 +301,7 @@ class Mage_Core_Model_Config extends Mage_Core_Model_Config_Base
                 }
             }
         }
+
         return false;
     }
 
@@ -411,8 +412,18 @@ class Mage_Core_Model_Config extends Mage_Core_Model_Config_Base
      */
     protected function _canUseCacheForInit()
     {
-        return Mage::app()->useCache('config') && $this->_allowCacheForInit
-            && !$this->_loadCache($this->_getCacheLockId());
+        if (Mage::app()->useCache('config') && $this->_allowCacheForInit) {
+            $retries = 10;
+            do {
+                if ($this->_loadCache($this->_getCacheLockId())) {
+                    if ($retries) usleep(500000); // 0.5 seconds
+                } else {
+                    return TRUE;
+                }
+            } while ($retries--);
+        }
+
+        return FALSE;
     }
 
     /**
@@ -454,6 +465,8 @@ class Mage_Core_Model_Config extends Mage_Core_Model_Config_Base
             return $this;
         }
 
+        $this->_saveCache(time(), $cacheLockId, array(), 60);
+
         if (!empty($this->_cacheSections)) {
             $xml = clone $this->_xml;
             foreach ($this->_cacheSections as $sectionName => $level) {
@@ -462,16 +475,17 @@ class Mage_Core_Model_Config extends Mage_Core_Model_Config_Base
             }
             $this->_cachePartsForSave[$this->getCacheId()] = $xml->asNiceXml('', false);
         } else {
-            return parent::saveCache($tags);
+            parent::saveCache($tags);
+            $this->_removeCache($cacheLockId);
+            return $this;
         }
 
-        $this->_saveCache(time(), $cacheLockId, array(), 60);
-        $this->removeCache();
         foreach ($this->_cachePartsForSave as $cacheId => $cacheData) {
             $this->_saveCache($cacheData, $cacheId, $tags, $this->getCacheLifetime());
         }
         unset($this->_cachePartsForSave);
         $this->_removeCache($cacheLockId);
+
         return $this;
     }
 
