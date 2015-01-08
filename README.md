@@ -12,4 +12,4 @@ The changes are as follows:
 About This Repository
 ======
 
-THis repository contains a Composer installable version of Colin Mollenhour's work (https://gist.github.com/colinmollenhour/7a91c4a92ccfd2adaeb6).  Colin deserves all of the credit for the idea and it's implementation, we just did the composer.json!
+This repository contains a Composer installable version of Colin Mollenhour's work (https://gist.github.com/colinmollenhour/7a91c4a92ccfd2adaeb6).  Colin deserves all of the credit for the idea and it's implementation, we just did the composer.json!
