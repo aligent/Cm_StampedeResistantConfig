@@ -8,3 +8,8 @@ The changes are as follows:
 * If the cache lock flag is present, sleep for half a second and check again for up to 5 seconds rather than immediately considering the request a miss.
 * Start the cache lock as soon as save starts rather than after separating and serializing the sub-sections.
 * Do not clear the config tag when saving the cache.
+
+About This Repository
+======
+
+THis repository contains a Composer installable version of Colin Mollenhour's work (https://gist.github.com/colinmollenhour/7a91c4a92ccfd2adaeb6).  Colin deserves all of the credit for the idea and it's implementation, we just did the composer.json!
